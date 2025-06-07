@@ -5,52 +5,6 @@ import 'package:sunflower/core/global_widgets/gradient_appbar.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  String _getLocalizedString(String key, String languageCode) {
-    final ruTranslations = {
-      'home_title': 'Подсолнух',
-      'intro':
-          'Фигуры Лиссажу - замкнутые плоские кривые, описываемые точкой, движение которой является суперпозицией двух взаимно перпендикулярных колебаний.',
-      'equations_title': 'Параметрические уравнения:',
-      'equations': 'x = A₁cos(ω₁t + φ₁)\n'
-          'y = A₂cos(ω₂t + φ₂)',
-      'properties_title': 'Свойства фигур:',
-      'properties': '• Отношение частот ω₂:ω₁ - рациональное число\n'
-          '• Фигура вписана в прямоугольник 2A₁×2A₂\n'
-          '• Вид зависит от отношения частот и разности фаз Δφ=φ₂-φ₁',
-      'equal_freq':
-          'При равных частотах (ω₂:ω₁=1:1) получаются эллипсы, которые могут вырождаться в отрезки или окружности.',
-      'observation':
-          'Фигуры можно наблюдать на осциллографе, подавая напряжения с рациональным отношением частот.',
-      'author_title': 'Об авторе',
-      'author_text':
-          'Жюль Антуан Лиссажу (1822-1880) - французский математик и физик, наиболее известный своими исследованиями в области колебаний и волн. В 1857 году он разработал оптический метод изучения звуковых колебаний, используя зеркала, прикреплённые к камертонам. Этот метод позволил ему визуализировать сложные колебательные движения, которые теперь носят его имя. Лиссажу преподавал математику в Лицее Сент-Луи в Париже и был членом Французского физического общества. Его работы внесли значительный вклад в понимание гармонических колебаний и их визуализации.',
-    };
-
-    final enTranslations = {
-      'home_title': 'SunFlower',
-      'intro':
-          'Lissajous figures are closed plane curves traced by a point executing two perpendicular harmonic oscillations.',
-      'equations_title': 'Parametric equations:',
-      'equations': 'x = A₁cos(ω₁t + φ₁)\n'
-          'y = A₂cos(ω₂t + φ₂)',
-      'properties_title': 'Figure properties:',
-      'properties': '• Frequency ratio ω₂:ω₁ is a rational number\n'
-          '• Figure is inscribed in 2A₁×2A₂ rectangle\n'
-          '• Shape depends on frequency ratio and phase difference Δφ=φ₂-φ₁',
-      'equal_freq':
-          'With equal frequencies (ω₂:ω₁=1:1) we get ellipses that can degenerate into line segments or circles.',
-      'observation':
-          'The figures can be observed on an oscilloscope by applying voltages with rational frequency ratio.',
-      'author_title': 'About the Author',
-      'author_text':
-          'Jules Antoine Lissajous (1822-1880) was a French mathematician and physicist best known for his work on vibrations and waves. In 1857, he developed an optical method for studying sound vibrations using mirrors attached to tuning forks. This method allowed him to visualize complex oscillatory motions that now bear his name. Lissajous taught mathematics at the Lycée Saint-Louis in Paris and was a member of the French Physical Society. His work made significant contributions to the understanding of harmonic oscillations and their visualization.',
-    };
-
-    return languageCode == 'ru'
-        ? ruTranslations[key] ?? key
-        : enTranslations[key] ?? key;
-  }
-
   @override
   Widget build(BuildContext context) {
     final appModel = AppModelProvider.of(context);
@@ -59,7 +13,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: GradientAppBar(
-        title: _getLocalizedString('home_title', appModel.languageCode),
+        title: 'Подсолнух',
         isDarkTheme: appModel.isDarkTheme,
       ),
       body: SingleChildScrollView(
@@ -67,6 +21,29 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              'Исследование математической модели расположения семян в соцветии подсолнуха, основанной на спирали Фибоначчи.',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 20),
+            _buildSection(
+              theme,
+              'Математическая модель',
+              'Модель соцветия подсолнуха размещает семена в точках первичной спирали роста:\n\n'
+                  '√n exp(2πniδ), где n = 1, 2, 3, ..., δ = g², а g - золотое сечение (g = ½(√5 - 1)).\n\n'
+                  'Угол расхождения между семенами равен 137.5°, что связано с золотым сечением и обеспечивает наиболее эффективную упаковку семян.',
+            ),
+            _buildSection(
+              theme,
+              'Эффективность упаковки',
+              '• Эффективность упаковки η для спирали Фибоначчи ≈ 0.82\n'
+                  '• Для шестиугольной решётки η ≈ 1.15\n'
+                  '• При других углах расхождения эффективность значительно ниже\n\n'
+                  'Оптимальный угол 137.5° обеспечивает равномерное распределение семян без плотных скоплений или разреженных областей.',
+            ),
+            const SizedBox(height: 20),
             Center(
               child: GestureDetector(
                 onTap: () => _showFullScreenImage(context, 'assets/resize.jpg'),
@@ -100,97 +77,89 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            Text(
-              _getLocalizedString('intro', appModel.languageCode),
-              style: theme.textTheme.bodyLarge?.copyWith(
-                height: 1.5,
-              ),
-            ),
             const SizedBox(height: 20),
             _buildSection(
               theme,
-              _getLocalizedString('equations_title', appModel.languageCode),
-              _getLocalizedString('equations', appModel.languageCode),
+              'Программная реализация',
+              'Алгоритм для визуализации расположения семян:\n\n'
+                  'final goldenAngle = 137.5 * pi / 180; // Угол Фибоначчи в радианах\n'
+                  'final points = <Offset>[];\n\n'
+                  'for (int i = 0; i < nSeeds; i++) {\n'
+                  '  final radius = sqrt(i) * 2;                  \t // Расстояние от центра\n'
+                  '  final angle = i * goldenAngle;        \t// Угол поворота\n'
+                  '  final x = radius * cos(angle);        \t// Декартова координата x\n'
+                  '  final y = radius * sin(angle);       \t// Декартова координата y\n'
+                  '  points.add(Offset(x, y));            \t// Добавление точки\n'
+                  '}',
               isCode: true,
             ),
 
-            // Properties section
+            // Блок с разными углами расхождения
             _buildSection(
               theme,
-              _getLocalizedString('properties_title', appModel.languageCode),
-              _getLocalizedString('properties', appModel.languageCode),
+              'Сравнение углов расхождения',
+              'Эффективность упаковки семян сильно зависит от выбранного угла расхождения:',
             ),
-            Text(
-              _getLocalizedString('equal_freq', appModel.languageCode),
-              style: theme.textTheme.bodyLarge?.copyWith(
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Observation info
-            Text(
-              _getLocalizedString('observation', appModel.languageCode),
-              style: theme.textTheme.bodyLarge?.copyWith(
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 30),
-            Divider(color: theme.dividerColor),
-            const SizedBox(height: 20),
-            Text(
-              _getLocalizedString('author_title', appModel.languageCode),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            _buildAngleComparisonCard(
+              context,
+              angle: '21/55 (≈137.45°)',
+              description:
+                  'Центр равномерно покрыт, но дальше семена концентрируются на 55-парастихах. '
+                  'Соседние семена на спицах становятся сколь угодно близкими, η ≈ 0',
+              imagePath: 'assets/sunflower_1.jpg',
+              efficiency: 'η ≈ 0',
+              screenWidth: screenWidth,
             ),
             const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 120,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      'assets/sunflower.jpg',
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                      errorBuilder: (context, error, stackTrace) => Center(
-                        child: Icon(
-                          Icons.person,
-                          size: 50,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
+            _buildAngleComparisonCard(
+              context,
+              angle: '(155 + √13)/414 (≈137.51°)',
+              description:
+                  'Семена накапливаются сначала на 13-парастихах, затем на 47-парастихах. '
+                  'Семена никогда не приближаются сколь угодно близко, но η мала',
+              imagePath: 'assets/sunflower_2.jpg',
+              efficiency: 'η < 0.56',
+              screenWidth: screenWidth,
+            ),
+            const SizedBox(height: 16),
+            _buildAngleComparisonCard(
+              context,
+              angle: 'Золотой угол (≈137.5°)',
+              description:
+                  'Семена равномерно покрывают весь диск без близких соседей. '
+                  'Наибольшая эффективность упаковки среди спиральных моделей',
+              imagePath: 'assets/sunflower_3.jpg',
+              efficiency: 'η ≈ 0.8169',
+              screenWidth: screenWidth,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Формула эффективности: η = (5 - 4 cos(6πg²))/π, где g - золотое сечение',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontStyle: FontStyle.italic,
+                height: 1.5,
+              ),
+            ),
 
-                // Текст об авторе
-                Expanded(
-                  child: Text(
-                    _getLocalizedString('author_text', appModel.languageCode),
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-              ],
+            _buildSection(
+              theme,
+              'Применение в природе и архитектуре',
+              '1. Природа:\n'
+                  '   • Сосновые шишки и ананасы: семена расположены по спиралям Фибоначчи (обычно 8 и 13 или 5 и 8)\n'
+                  '   • Расположение листьев на стебле (филлотаксис): углы, кратные 137.5°, минимизируют затенение\n\n'
+                  '2. Архитектура:\n'
+                  '   • Парфенон в Афинах: пропорции фасада соответствуют золотому сечению\n'
+                  '   • Здание Сиднейской оперы: использует спиральные формы для устойчивости и эстетики',
+            ),
+            const SizedBox(height: 20),
+            Divider(color: theme.dividerColor),
+            const SizedBox(height: 20),
+            _buildSection(
+              theme,
+              'Выводы',
+              '1. Угол 137.5° обеспечивает оптимальную упаковку семян в подсолнухе\n'
+                  '2. Аналогичные паттерны встречаются в других природных объектах и искусственных структурах\n'
+                  '3. Разработанное приложение может быть использовано для образовательных целей и исследований в области биоматематики',
             ),
             const SizedBox(height: 30),
           ],
@@ -235,6 +204,98 @@ class HomePage extends StatelessWidget {
         ),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildAngleComparisonCard(
+    BuildContext context, {
+    required String angle,
+    required String description,
+    required String imagePath,
+    required String efficiency,
+    required double screenWidth,
+  }) {
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  angle,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Chip(
+                  label: Text(efficiency),
+                  backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                  labelStyle: TextStyle(
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              description,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: GestureDetector(
+                onTap: () => _showFullScreenImage(context, imagePath),
+                child: Container(
+                  width: screenWidth * 0.2,
+                  height: screenWidth * 0.2,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: theme.dividerColor.withOpacity(0.5),
+                      width: 1,
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      imagePath,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image_not_supported,
+                              size: 40,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Изображение не найдено',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

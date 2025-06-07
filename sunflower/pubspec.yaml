@@ -46,6 +46,7 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets: 
-    - assets/resize.jpg
-    - assets/lissajous.jpg
     - assets/frame.png
+    - assets/sunflower_1.jpg
+    - assets/sunflower_2.jpg
+    - assets/sunflower_3.jpg

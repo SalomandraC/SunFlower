@@ -131,7 +131,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _launchDownloadUrl(
       BuildContext context, String languageCode) async {
-    const url = 'https://github.com/SalomandraC/sunflower';
+    const url = 'https://github.com/SalomandraC/SunFlower';
     final uri = Uri.parse(url);
     try {
       if (!await canLaunchUrl(uri)) {

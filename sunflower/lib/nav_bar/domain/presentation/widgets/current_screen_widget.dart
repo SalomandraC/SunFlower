@@ -9,7 +9,7 @@ class CurrentAppScreenWidget extends StatelessWidget {
   String _getLocalizedString(String key, String languageCode) {
     final ruTranslations = {
       'home': 'Информация',
-      'task': 'Построение фигур',
+      'task': 'Изучение положений семян',
       'settings': 'Настройки',
     };
 
