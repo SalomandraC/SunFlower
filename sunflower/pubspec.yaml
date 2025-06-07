@@ -28,6 +28,8 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   math_expressions: ^2.3.0
   shared_preferences: ^2.2.2
+  dio: ^5.3.3
+  flutter_pdfview: 1.3.2
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +49,8 @@ flutter:
   uses-material-design: true
   assets: 
     - assets/frame.png
+    - assets/sunflower.png
     - assets/sunflower_1.jpg
     - assets/sunflower_2.jpg
     - assets/sunflower_3.jpg
+    - assets/sunflower_math.pdf

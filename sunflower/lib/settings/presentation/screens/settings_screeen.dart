@@ -4,6 +4,10 @@ import 'package:sunflower/core/global_widgets/gradient_appbar.dart';
 import 'package:sunflower/settings/presentation/components/small_switch_list_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:open_file/open_file.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -232,25 +236,24 @@ class HelpScreen extends StatelessWidget {
 
     final List<HelpResource> resources = [
       HelpResource(
-        title: isRussian ? 'Основы фигур Лиссажу' : 'Lissajous Figures Basics',
-        url: 'https://en.wikipedia.org/wiki/Lissajous_curve',
+        title: isRussian
+            ? 'Эффективность упаковки в подсолнухе'
+            : 'Sunflower Packing Efficiency',
+        url:
+            'https://www.researchgate.net/publication/242991835_Packing_efficiency_in_sunflower_heads',
         description: isRussian
-            ? 'Подробная статья о фигурах Лиссажу на Википедии'
-            : 'Detailed Wikipedia article about Lissajous figures',
+            ? 'Исследование расположения семечек в подсолнухе'
+            : 'Research on sunflower seed arrangement',
       ),
       HelpResource(
-        title: isRussian ? 'Математика фигур Лиссажу' : 'Lissajous Mathematics',
-        url: 'https://mathworld.wolfram.com/LissajousCurve.html',
+        title: isRussian
+            ? 'Руководство по математике подсолнуха'
+            : 'Sunflower Math Guide',
+        assetPath: 'assets/sunflower_math.pdf',
         description: isRussian
-            ? 'Математическое объяснение фигур Лиссажу'
-            : 'Mathematical explanation of Lissajous curves',
-      ),
-      HelpResource(
-        title: isRussian ? 'Примеры фигур Лиссажу' : 'Lissajous Examples',
-        url: 'https://www.desmos.com/calculator/sunflower-curves',
-        description: isRussian
-            ? 'Интерактивные примеры фигур Лиссажу'
-            : 'Interactive Lissajous curve examples',
+            ? 'Подробное руководство по математическим моделям'
+            : 'Detailed math models guide',
+        isPdf: true,
       ),
     ];
 
@@ -267,16 +270,62 @@ class HelpScreen extends StatelessWidget {
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             child: ListTile(
+              leading: Icon(resource.isPdf ? Icons.picture_as_pdf : Icons.link),
               title: Text(resource.title, style: theme.textTheme.bodyMedium),
               subtitle:
                   Text(resource.description, style: theme.textTheme.bodySmall),
               trailing: const Icon(Icons.open_in_new),
-              onTap: () => _launchUrl(resource.url, context),
+              onTap: () {
+                if (resource.isPdf) {
+                  _openPdf(context, resource);
+                } else {
+                  _launchUrl(resource.url!, context);
+                }
+              },
             ),
           );
         },
       ),
     );
+  }
+
+  Future<void> _openPdf(BuildContext context, HelpResource resource) async {
+    if (resource.assetPath != null) {
+      try {
+        // Для локального файла из assets
+        final file = await _getLocalFile(resource.assetPath!);
+        if (file == null) {
+          _showError(context,
+              isRussian: languageCode == 'ru', message: 'Файл не найден');
+          return;
+        }
+
+        // Открываем PDF во внешнем приложении
+        await OpenFile.open(file.path);
+      } catch (e) {
+        _showError(context,
+            isRussian: languageCode == 'ru', message: 'Ошибка открытия файла');
+        debugPrint('Error opening PDF: $e');
+      }
+    }
+  }
+
+  Future<File?> _getLocalFile(String assetPath) async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final filename = assetPath.split('/').last;
+      final file = File('${dir.path}/$filename');
+
+      if (!await file.exists()) {
+        final data = await rootBundle.load(assetPath);
+        await file.writeAsBytes(data.buffer.asUint8List());
+      }
+
+      return file;
+    } catch (e) {
+      debugPrint('Error loading PDF: $e');
+      return null;
+    }
   }
 
   String _getLocalizedTitle() {
@@ -286,9 +335,8 @@ class HelpScreen extends StatelessWidget {
   Future<void> _launchUrl(String url, BuildContext context) async {
     final uri = Uri.parse(url);
     try {
-      final canLaunch = await canLaunchUrl(uri);
-      if (!canLaunch) {
-        _showError(context);
+      if (!await canLaunchUrl(uri)) {
+        _showError(context, isRussian: languageCode == 'ru');
         return;
       }
 
@@ -299,17 +347,17 @@ class HelpScreen extends StatelessWidget {
             : LaunchMode.externalApplication,
       );
     } catch (e) {
-      _showError(context);
+      _showError(context, isRussian: languageCode == 'ru');
       debugPrint('Error launching URL: $e');
     }
   }
 
-  void _showError(BuildContext context) {
-    final isRussian = languageCode == 'ru';
+  void _showError(BuildContext context,
+      {required bool isRussian, String? message}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-            isRussian ? 'Не удалось открыть ссылку' : 'Could not launch URL'),
+        content: Text(message ??
+            (isRussian ? 'Не удалось открыть ссылку' : 'Could not launch URL')),
       ),
     );
   }
@@ -317,12 +365,16 @@ class HelpScreen extends StatelessWidget {
 
 class HelpResource {
   final String title;
-  final String url;
+  final String? url;
+  final String? assetPath;
   final String description;
+  final bool isPdf;
 
   const HelpResource({
     required this.title,
-    required this.url,
+    this.url,
+    this.assetPath,
     required this.description,
+    this.isPdf = false,
   });
 }
